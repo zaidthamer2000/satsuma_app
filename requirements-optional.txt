@@ -1,0 +1,11 @@
+# Each line unlocks extra formats/features. Install only what you need.
+pillow-heif>=0.18      # HEIC / HEIF photos (iPhone)
+rawpy>=0.21            # camera RAW photos
+psd-tools>=1.9         # Photoshop files
+pdf2docx>=0.5.8        # best PDF -> Word (GPL/AGPL: see THIRD_PARTY_NOTICES.md)
+rembg>=2.0.60          # AI background removal (downloads a model once)
+onnxruntime>=1.17
+faster-whisper>=1.0    # speech to text (downloads a model once)
+brotli>=1.1            # WOFF2 fonts
+py7zr>=0.21            # .7z archives
+trimesh>=4.0           # 3D models

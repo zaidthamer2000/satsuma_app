@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "satsuma-converter"
+version = "1.0.0"
+description = "Offline, open-source file converter and toolbox (images, PDF, Word, audio, video, OCR) for Windows 10/11"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+  "Pillow>=11.3",
+  "pypdfium2>=4.30",
+  "pikepdf>=9.0",
+  "pdfplumber>=0.11",
+  "python-docx>=1.1",
+  "fonttools>=4.50",
+]
+
+[project.optional-dependencies]
+gui = ["PySide6>=6.6"]
+heic = ["pillow-heif>=0.18"]
+raw = ["rawpy>=0.21"]
+psd = ["psd-tools>=1.9"]
+pdfword = ["pdf2docx>=0.5.8"]          # best PDF->Word quality; GPL/AGPL licensed, see THIRD_PARTY_NOTICES.md
+ai = ["rembg>=2.0.60", "onnxruntime>=1.17", "faster-whisper>=1.0"]
+extras = ["brotli>=1.1", "py7zr>=0.21", "trimesh>=4.0"]
+dev = ["pyinstaller>=6.5", "reportlab>=4.0", "openpyxl>=3.1"]
+
+[project.scripts]
+satsuma = "satsuma.cli:main"
+
+[project.gui-scripts]
+satsuma-gui = "satsuma.gui.app:main"
+
+[tool.setuptools.packages.find]
+include = ["satsuma*"]
