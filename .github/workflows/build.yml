@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+    tags: ["v*"]
+  pull_request:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          
+      - name: Install external programs (FFmpeg, Tesseract, Pandoc, LibreOffice)
+        shell: powershell
+        run: |
+          choco install ffmpeg tesseract pandoc libreoffice-fresh -y --no-progress
+          echo "C:\Program Files\Tesseract-OCR" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+
+      - name: Install Python packages
+        run: |
+          python -m pip install --upgrade pip
+          if (Test-Path "requirements-dev.txt") { pip install -r requirements-dev.txt }
+          pip install pyinstaller
+
+      - name: Build with PyInstaller using spec file
+        run: pyinstaller packaging/satsuma.spec --noconfirm --clean
+
+      - name: Smoke test the built program
+        shell: powershell
+        run: |
+          .\dist\Satsuma\satsuma-cli.exe doctor
+          python -c "from PIL import Image; Image.new('RGB',(64,64),(200,80,20)).save('smoke.png')"
+          .\dist\Satsuma\satsuma-cli.exe convert smoke.png --to webp
+          if (-not (Test-Path smoke.webp)) { throw "built program failed to convert" }
+
+      - name: Build installer
+        shell: powershell
+        run: |
+          choco install innosetup -y --no-progress
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" packaging\installer.iss
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Satsuma-windows
+          path: |
+            dist/Satsuma-Setup-*.exe
+            dist/Satsuma/
