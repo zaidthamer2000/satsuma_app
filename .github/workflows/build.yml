@@ -25,14 +25,16 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        cd Satsuma-*
+        $folder = Get-ChildItem -Directory | Where-Object { $_.Name -like "*satsuma*" } | Select-Object -First 1
+        Set-Location $folder.FullName
         if (Test-Path "requirements.txt") { pip install -r requirements.txt }
         if (Test-Path "requirements-dev.txt") { pip install -r requirements-dev.txt }
         pip install pyinstaller
 
     - name: Build with PyInstaller spec
       run: |
-        cd Satsuma-*
+        $folder = Get-ChildItem -Directory | Where-Object { $_.Name -like "*satsuma*" } | Select-Object -First 1
+        Set-Location $folder.FullName
         pyinstaller packaging/satsuma.spec --noconfirm --clean
 
     - name: Upload EXE Artifact
